@@ -1,72 +1,117 @@
 
+from decimal import Decimal
+
 from pydantic import BaseModel, ConfigDict, Field
-from typing import Optional
 
 
-class ProductVariantCreate(BaseModel):
-    carat: str
-    color: str
-    size: float
-    style: Optional[str] = None
-    weight: float
-
+# --------------------------------------------------
+# PRODUCT CREATE SCHEMA
+# --------------------------------------------------
 
 class ProductCreate(BaseModel):
-    product_id: str
-    metal: str
-    product_type: str
-    project: str
 
-    category: str
-    sub_category: str
+    # Product identification
+    product_id: str = Field(
+        min_length=1,
+        max_length=50
+    )
 
-    collection: str
-    sub_collection: str
+    # Master table references
+    metal_id: int = Field(gt=0)
+    project_id: int = Field(gt=0)
+    product_type_id: int = Field(gt=0)
 
-    keywords: list[str] = Field(default_factory=list)
-    gender: str
+    category_id: int = Field(gt=0)
+    subcategory_id: int = Field(gt=0)
 
-    default_carat: str
-    default_color: str
-    default_size: float
-    default_style: Optional[str] = None
-    default_weight: float
+    collection_id: int = Field(gt=0)
+    subcollection_id: int = Field(gt=0)
 
-    wastage: float
-    uom: str
+    gender_id: int = Field(gt=0)
+    uom_id: int = Field(gt=0)
 
-    variants: list[ProductVariantCreate] = Field(
+    # Default attributes
+    # Required/optional status is validated
+    # dynamically using category_attribute_config.
+
+    default_carat_id: int | None = Field(default=None, gt=0)
+    default_color_id: int | None = Field(default=None, gt=0)
+    default_size_id: int | None = Field(default=None, gt=0)
+    default_style_id: int | None = Field(default=None, gt=0)
+
+    # Default weights
+    default_gross_weight: Decimal = Field(gt=0)
+    default_net_weight: Decimal = Field(gt=0)
+
+    # Other product details
+    wastage: Decimal = Field(ge=0)
+
+    keywords: list[str] = Field(
         default_factory=list
     )
 
+    is_active: bool = True
 
-class ProductVariantResponse(ProductVariantCreate):
+
+# --------------------------------------------------
+# PRODUCT VARIANT RESPONSE SCHEMA
+# --------------------------------------------------
+
+class ProductVariantResponse(BaseModel):
+
     id: int
+    product_id: int
+
+    carat_id: int | None
+    color_id: int | None
+    size_id: int | None
+    style_id: int | None
+
+    gross_weight: Decimal
+    net_weight: Decimal
 
     model_config = ConfigDict(from_attributes=True)
 
 
+# --------------------------------------------------
+# PRODUCT RESPONSE SCHEMA
+# --------------------------------------------------
+
 class ProductResponse(BaseModel):
+
     id: int
     product_id: str
-    metal: str
-    product_type: str
-    project: str
-    category: str
-    sub_category: str
-    collection: str
-    sub_collection: str
+
+    # Master IDs
+    metal_id: int
+    project_id: int
+    product_type_id: int
+
+    category_id: int
+    subcategory_id: int
+
+    collection_id: int
+    subcollection_id: int
+
+    gender_id: int
+    uom_id: int
+
+    # Default attributes
+    default_carat_id: int | None
+    default_color_id: int | None
+    default_size_id: int | None
+    default_style_id: int | None
+
+    # Default weights
+    default_gross_weight: Decimal
+    default_net_weight: Decimal
+
+    # Other details
+    wastage: Decimal
     keywords: list[str]
-    gender: str
+    is_active: bool
 
-    default_carat: str
-    default_color: str
-    default_size: float
-    default_style: Optional[str]
-    default_weight: float
-    wastage: float
-    uom: str
-
+    # Automatically generated variants
     variants: list[ProductVariantResponse]
 
     model_config = ConfigDict(from_attributes=True)
