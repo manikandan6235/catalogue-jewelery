@@ -10,7 +10,17 @@ from app.modules.master.project_router import router as project_router
 from app.modules.master.producttype_router import router as product_type_router
 from app.modules.products.bulk_upload.bulk_router import router as bulk_router
 from app.modules.master.category_router import router as category_router
-
+from app.modules.master.subcategory_router import router as subcategory_router
+from app.modules.master.subcollection_router import router as subcollection_router
+from app.modules.master.carat_router import router as carat_router
+from app.modules.master.color_router import router as color_router
+from app.modules.master.size_router import router as size_router
+from app.modules.master.style_router import router as style_router
+from app.modules.master.gender_router import router as gender_router
+from app.modules.master.uom_router import router as uom_router
+from app.modules.products.bulk_upload.bulk_router import (
+    router as bulk_product_router
+)
 app = FastAPI(
     title=settings.APP_NAME,
     debug=settings.DEBUG
@@ -27,8 +37,15 @@ app.include_router(project_router)
 app.include_router(product_type_router)
 app.include_router(bulk_router)
 app.include_router(category_router)
-
-
+app.include_router(subcategory_router)
+app.include_router(subcollection_router)
+app.include_router(carat_router)
+app.include_router(color_router)
+app.include_router(size_router)
+app.include_router(style_router)
+app.include_router(gender_router)
+app.include_router(uom_router)
+app.include_router(bulk_product_router)
 @app.get("/")
 def home():
     return {
